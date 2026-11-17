@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" role="img" aria-labelledby="title desc">
+<title id="title">Shadowblade: Echoes of Dusk</title><desc id="desc">Original crescent and eclipse emblem with the game title.</desc>
+<defs><linearGradient id="moon" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9cecff"/><stop offset="1" stop-color="#7869d8"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect width="640" height="180" rx="22" fill="#10182d"/><circle cx="92" cy="90" r="48" fill="none" stroke="#35456d" stroke-width="3"/>
+<path d="M105 40a51 51 0 1 0 37 88A44 44 0 0 1 105 40Z" fill="url(#moon)" filter="url(#glow)"/><circle cx="91" cy="91" r="5" fill="#e8fbff"/>
+<text x="174" y="83" fill="#f1f6ff" font-family="Verdana,sans-serif" font-size="34" font-weight="700" letter-spacing="3">SHADOWBLADE</text><text x="177" y="119" fill="#91a9d7" font-family="Verdana,sans-serif" font-size="17" letter-spacing="5">ECHOES OF DUSK</text></svg>
