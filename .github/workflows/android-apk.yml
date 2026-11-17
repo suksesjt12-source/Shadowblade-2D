@@ -1,0 +1,87 @@
+name: Android APK build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout game
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: |
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.2.12479018" "cmake;3.30.3"
+          yes | sdkmanager --licenses
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Prepare Raymob Android project
+        run: |
+          git clone --depth 1 --recurse-submodules https://github.com/Bigfoot71/Raymob.git android-build
+          cp src/main.cpp android-build/app/src/main/cpp/main.cpp
+          cat > android-build/app/src/main/cpp/CMakeLists.txt <<'EOF'
+          cmake_minimum_required(VERSION 3.22.1)
+          project(shadowblade LANGUAGES C CXX)
+          set(CMAKE_C_STANDARD 99)
+          set(CMAKE_CXX_STANDARD 17)
+          set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+          add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
+          add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raymob)
+
+          add_library(shadowblade SHARED
+              main.cpp
+              ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
+          )
+          target_compile_definitions(shadowblade PRIVATE PLATFORM_ANDROID)
+          target_include_directories(shadowblade PRIVATE
+              ${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib
+              ${CMAKE_CURRENT_SOURCE_DIR}/deps/raymob
+              ${ANDROID_NDK}/sources/android/native_app_glue
+          )
+          target_link_libraries(shadowblade
+              raylib raymoblib android log EGL GLESv2 OpenSLES dl
+          )
+          EOF
+          sed -i 's/^projectName=.*/projectName=Shadowblade/' android-build/gradle.properties
+          sed -i 's/^app.name=.*/app.name=SHADOWBLADE: ECHOES OF DUSK/' android-build/gradle.properties
+          sed -i 's/^app.native_library_name=.*/app.native_library_name=shadowblade/' android-build/gradle.properties
+          sed -i 's/^app.application_id=.*/app.application_id=com.suksesjt12.shadowblade/' android-build/gradle.properties
+          sed -i 's/^app.version_name=.*/app.version_name=0.1.0/' android-build/gradle.properties
+          sed -i 's/^app.version_code=.*/app.version_code=1/' android-build/gradle.properties
+          sed -i 's/^gl.version=.*/gl.version=ES20/' android-build/gradle.properties
+
+      - name: Build debug APK
+        working-directory: android-build
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: Verify APK exists
+        run: |
+          test -f android-build/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android-build/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shadowblade-Android-APK
+          path: android-build/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
