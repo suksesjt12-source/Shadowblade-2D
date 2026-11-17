@@ -8,7 +8,7 @@ namespace {
 constexpr int SW = 960, SH = 540;
 constexpr float WORLD_W = 2400.0f;
 const Color NIGHT{12, 17, 35, 255}, MIDNIGHT{20, 29, 55, 255};
-const Color CYAN{117, 231, 255, 255}, VIOLET{139, 112, 231, 255};
+const Color SB_CYAN{117, 231, 255, 255}, SB_PURPLE{139, 112, 231, 255};
 
 struct Platform { Rectangle r; };
 struct Shard { Vector2 p; bool taken = false; };
@@ -92,25 +92,25 @@ void DrawWorld(Game& g) {
             DrawLine(x,(int)p.r.y+15,x+10,(int)p.r.y+15,Color{57,72,103,255});
     }
     DrawCircle(2240, 405, 42, Color{72,54,132,90});
-    DrawCircleLines(2240,405,42,VIOLET);
+    DrawCircleLines(2240,405,42,SB_PURPLE);
     DrawRectangle(2224,365,32,80,Color{87,68,157,255});
-    DrawRectangle(2230,372,20,66,CYAN);
+    DrawRectangle(2230,372,20,66,SB_CYAN);
     for (const auto& s : g.shards) if (!s.taken) {
         DrawCircleV(s.p, 15, Color{95,224,255,45});
-        DrawPoly(s.p,4,9,45,CYAN);
+        DrawPoly(s.p,4,9,45,SB_CYAN);
         DrawCircleV(s.p,3,RAYWHITE);
     }
     for (const auto& e : g.sentries) {
         DrawCircle((int)(e.r.x+e.r.width/2),(int)(e.r.y+10),14,Color{112,82,184,255});
         DrawRectangleRounded({e.r.x,e.r.y+10,e.r.width,e.r.height-10},0.35f,5,Color{69,57,117,255});
-        DrawCircle((int)e.r.x+9,(int)e.r.y+11,3,CYAN);
-        DrawCircle((int)e.r.x+20,(int)e.r.y+11,3,CYAN);
+        DrawCircle((int)e.r.x+9,(int)e.r.y+11,3,SB_CYAN);
+        DrawCircle((int)e.r.x+20,(int)e.r.y+11,3,SB_CYAN);
     }
     Color pc = g.hurtTime>0 ? Color{255,180,190,255} : Color{223,235,255,255};
     DrawCircle((int)(g.player.x+14),(int)(g.player.y+10),11,pc);
     DrawRectangleRounded({g.player.x+4,g.player.y+19,20,23},0.3f,5,pc);
-    DrawRectangle((int)g.player.x+5,(int)g.player.y+38,7,5,VIOLET);
-    DrawRectangle((int)g.player.x+17,(int)g.player.y+38,7,5,VIOLET);
+    DrawRectangle((int)g.player.x+5,(int)g.player.y+38,7,5,SB_PURPLE);
+    DrawRectangle((int)g.player.x+17,(int)g.player.y+38,7,5,SB_PURPLE);
     DrawCircle((int)g.player.x+18,(int)g.player.y+10,2,NIGHT);
 }
 
@@ -183,7 +183,7 @@ void UpdateGame(Game& g, float dt) {
 void DrawHUD(const Game& g) {
     DrawRectangleRounded({18,16,270,58},0.2f,8,Color{10,16,32,205});
     DrawText("ECHO ENERGY",32,25,12,Color{153,181,222,255});
-    for(int i=0;i<3;i++) DrawCircle(43+i*25,53,7,i<g.energy?CYAN:Color{57,66,91,255});
+    for(int i=0;i<3;i++) DrawCircle(43+i*25,53,7,i<g.energy?SB_CYAN:Color{57,66,91,255});
     DrawText(TextFormat("ECHOES  %02i / 06",g.collected),130,46,15,RAYWHITE);
     DrawRectangleRounded({SW-180,16,160,38},0.2f,8,Color{10,16,32,190});
     DrawText("ESC  PAUSE",SW-163,27,14,RAYWHITE);
@@ -200,7 +200,7 @@ void DrawOverlay(const char* title,const char* subtitle,const char* action) {
     int sw=MeasureText(subtitle,18);
     DrawText(subtitle,SW/2-sw/2,232,18,Color{174,197,231,255});
     int aw=MeasureText(action,18);
-    DrawText(action,SW/2-aw/2,305,18,CYAN);
+    DrawText(action,SW/2-aw/2,305,18,SB_CYAN);
 }
 }
 
@@ -226,9 +226,9 @@ int main() {
             DrawRectangleGradientV(0,0,SW,SH,MIDNIGHT,NIGHT);
             for(int i=0;i<24;i++) DrawCircle((i*79)%SW,(i*47)%SH,2,Color{119,168,221,120});
             DrawCircle(SW/2,190,66,Color{75,65,140,70});
-            DrawCircleLines(SW/2,190,66,VIOLET);
+            DrawCircleLines(SW/2,190,66,SB_PURPLE);
             DrawText("SHADOWBLADE",SW/2-190,195,38,RAYWHITE);
-            DrawText("E C H O E S   O F   D U S K",SW/2-148,246,16,CYAN);
+            DrawText("E C H O E S   O F   D U S K",SW/2-148,246,16,SB_CYAN);
             DrawText("JUMP  •  DASH  •  COLLECT  •  ESCAPE",SW/2-190,320,17,Color{170,190,225,255});
             DrawText("PRESS ENTER OR TAP TO BEGIN",SW/2-160,390,18,RAYWHITE);
         } else {
